@@ -1,56 +1,43 @@
-name: CI/CD Pipeline
-
-on:
-  push:
-    branches:
-      - docker_ci
-
 jobs:
   build_and_test_container:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout code
-    - name: Checkout code
-      uses: actions/checkout@v2
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    # Step 2: Set up Python environment and install dependencies
-    - name: Set up Python 3.13
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.13
+      # Step 2: Set up Python environment and install dependencies
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.13
 
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
 
-    # Debugging Step: Print working directory and list files
-    - name: Debug Print working directory and list files
-      run: |
-        pwd
-        ls -R
+      # Step 3: Run train.py to generate the model
+      - name: Run train.py to generate the model
+        run: |
+          python3 ./train.py
 
-    # Step 3: Run train.py to generate the model
-    - name: Run train.py to generate the model
-      run: |
-        python3 ./predict.py
+      # Step 4: Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t california-housing-regression .
 
-    # Step 4: Build Docker image
-    - name: Build Docker image
-      run: |
-        docker build -t california-housing-regression .
+      # Step 5: Run Docker container and verify
+      - name: Run Docker container and verify
+        run: |
+          docker run --rm california-housing-regression python3 predict.py
 
-    # Step 5: Run Docker container and verify
-    - name: Run Docker container and verify
-      run: |
-        docker run --rm california-housing-regression python3 predict.py
-
-    # Step 6: Push Docker image to DockerHub
-    - name: Push Docker image to DockerHub
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      run: |
-        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-        docker tag california-housing-regression $DOCKER_USERNAME/california-housing-regression:latest
-        docker push $DOCKER_USERNAME/california-housing-regression:latest
+      # Step 6: Push Docker image to DockerHub
+      - name: Push Docker image to DockerHub
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+          docker tag california-housing-regression $DOCKER_USERNAME/california-housing-regression:latest
+          docker push $DOCKER_USERNAME/california-housing-regression:latest

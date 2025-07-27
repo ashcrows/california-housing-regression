@@ -1,20 +1,26 @@
+# predict.py
 import joblib
-from sklearn.datasets import fetch_california_housing
-from sklearn.model_selection import train_test_split
+import os
+
+# Ensure the model file is in the working directory
+model_path = 'california_housing_model.joblib'
+
+# Check if the model file exists
+if not os.path.exists(model_path):
+    print(f"Model file not found: {model_path}")
+    exit(1)
 
 # Load the saved model
-model = joblib.load('california_housing_model.joblib')
+model = joblib.load(model_path)
 
 # Fetch the California Housing dataset
+from sklearn.datasets import fetch_california_housing
 data = fetch_california_housing()
 X = data.data
 y = data.target
 
-# Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Make predictions on the test set
-y_pred = model.predict(X_test)
+# Predict on the test set
+y_pred = model.predict(X)
 
 # Print the first few predictions to verify the model works
-print("Predictions on test data:", y_pred[:5])
+print("Predictions on the test data:", y_pred[:5])
