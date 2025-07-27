@@ -33,7 +33,7 @@ jobs:
       # Step 4: Run train.py to generate the model
       - name: Run train.py to generate the model
         run: |
-          python3 ./train.py
+          python3 train.py
 
       # Step 5: Build Docker image
       - name: Build Docker image
