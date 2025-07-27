@@ -24,6 +24,12 @@ jobs:
       run: |
         pip install -r requirements.txt
 
+    # Debugging Step: Print working directory and list files
+    - name: Debug: Print working directory and list files
+      run: |
+        pwd
+        ls -R
+
     # Step 3: Run train.py to generate the model
     - name: Run train.py to generate the model
       run: |
