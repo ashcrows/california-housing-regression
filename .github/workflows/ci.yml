@@ -24,29 +24,28 @@ jobs:
       run: |
         pip install -r requirements.txt
 
-    # Debugging Step: Print working directory and list files
+    # Step 3: Debugging Step: Print working directory and list files
     - name: Debug: Print working directory and list files
       run: |
         pwd
         ls -R
 
-    # Step 3: Run train.py to generate the model
+    # Step 4: Run train.py to generate the model
     - name: Run train.py to generate the model
       run: |
         python3 ./train.py
 
-    # Step 4: Build Docker image
+    # Step 5: Build Docker image
     - name: Build Docker image
       run: |
         docker build -t california-housing-regression .
 
-    # Step 5: Run Docker container and verify
+    # Step 6: Run Docker container and verify
     - name: Run Docker container and verify
       run: |
         docker run --rm california-housing-regression python3 predict.py
-      continue-on-error: false
 
-    # Step 6: Push Docker image to DockerHub
+    # Step 7: Push Docker image to DockerHub
     - name: Push Docker image to DockerHub
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
